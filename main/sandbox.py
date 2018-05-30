@@ -1,8 +1,10 @@
 import tweepy
 
+KEYPATH = "keys/auth"
+
 if __name__ == "__main__":
     # read auth details from file
-    with open("main/auth", "r") as auth_file:
+    with open(KEYPATH, "r") as auth_file:
         auth_lines = auth_file.readlines()
         ACCESS_TOKEN = auth_lines[0].strip().split("=")[1]
         ACCESS_SECRET = auth_lines[1].strip().split("=")[1]
