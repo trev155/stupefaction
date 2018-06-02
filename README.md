@@ -8,6 +8,11 @@ Twitter Application account:
 https://apps.twitter.com/app/15289640
 
 ## NOTES
+### up next
+- finish tweet extraction to file
+- how to ensure no duplicate tweet texts?
+- start working on a script that reads from file and does stuff
+
 ### short term idea
 - twitter api (streaming, or regular search)-> get tweets -> save to mysql db
     - query: either automatically fetch some trending hashtag, or just manually enter a query

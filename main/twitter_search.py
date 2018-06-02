@@ -4,23 +4,28 @@ twitter_api.py
 A script that executes a Search request to the Twitter API.
 
 Uses tweepy, see the documentation here: http://docs.tweepy.org/en/v3.6.0/api.html.
+Credit to: https://dev.to/bhaskar_vk/how-to-use-twitters-search-rest-api-most-effectively
 """
 import tweepy
-import json
 import argparse
-import twitter_util
+import sys
+import os
+import jsonpickle
 
 KEYPATH = "keys/auth"
 LANG = "en"
 COUNT = 100
+MAX_TWEETS = 100000
 TWEET_MODE = "extended"
 
 if __name__ == "__main__":
     # command line parsing
     parser = argparse.ArgumentParser(description="Preprocess CSV files")
     parser.add_argument("-q", "--query", help="Specify the query string to use", required=True)
+    parser.add_argument("-o", "--output", help="Specify output file path", required=True)
     args = parser.parse_args()
     query = args.query
+    output_filepath = os.path.join(args.output, query)
 
     # read auth details from private key file
     with open(KEYPATH, "r") as auth_file:
@@ -31,20 +36,50 @@ if __name__ == "__main__":
         CONSUMER_SECRET = auth_lines[3].strip().split("=")[1]
 
     # setup auth
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+    auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
-    # get API object
-    api = tweepy.API(auth)
+    # get access to twitter API object
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+    if not api:
+        print("Can't Authenticate")
+        sys.exit(-1)
 
-    # run query
-    results = api.search(q=query, lang=LANG, count=COUNT, tweet_mode=TWEET_MODE)
+    # helper variables
+    # all tweets have an id > 0, where higher ids are further back in time
+    # initialize max_id at -1 because we don't know where to start our search
+    max_id = -1
+    tweetCount = 0
 
-    # process the results
-    data_entries = twitter_util.search_results_to_data_entries(results)
+    with open(output_filepath, 'w') as f:
+        while tweetCount < MAX_TWEETS:
+            try:
+                # first iteration - read the most recent tweets
+                if max_id <= 0:
+                    new_tweets = api.search(q=query, count=COUNT)
+                # subsequent iterations - start searching where the previous iteration left off
+                else:
+                    new_tweets = api.search(q=query, count=COUNT, max_id=str(max_id - 1))
 
-    # print the results
-    print(json.dumps(data_entries, indent=2))
+                # no more tweets found, exit
+                if not new_tweets:
+                    print("No more tweets found, exiting.")
+                    break
 
-    # save the results
-    # TODO
+                # save all these tweets to file
+                # TODO preprocess the data before writing it out?
+                for tweet in new_tweets:
+                    f.write(jsonpickle.encode(tweet._json, unpicklable=False) + '\n')
+
+                # update variables - the last tweet of the result set is the oldest tweet
+                max_id = new_tweets[-1].id
+                tweetCount += len(new_tweets)
+
+                # print number processed so far
+                print("Downloaded [%d] tweets so far." % tweetCount)
+
+            except tweepy.TweepError as e:
+                print("Something went wrong: " + str(e))
+                break
+
+    print ("Downloaded [%d] tweets. Saved to %s" % (tweetCount, output_filepath))
+    
