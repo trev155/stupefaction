@@ -54,15 +54,12 @@ Point PyCharm to the virtualenv:
 
 - point it to /path-to-stupefaction-project/venv/bin/python
 
-### Requirements so far
-Main packages to install (make sure to do it your virtualenv):
-- tweepy
-- spacy
-- nltk
-- django
-- mysqlclient
-- textblob
-- pandas
+### Requirements
+Install in your virtualenv
+- `pip install -r requirements.txt`
+
+To save your requirements:
+- `pip freeze > requirements.txt`
 
 ### MySQL setup
 Install MySQL on your machine.

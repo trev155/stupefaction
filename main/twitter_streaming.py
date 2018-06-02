@@ -7,6 +7,7 @@ import tweepy
 
 KEYPATH = "keys/auth"
 
+
 class MyStreamListener(tweepy.StreamListener):
     stream_limit = 1000
     current_streamed = 0

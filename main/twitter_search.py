@@ -10,12 +10,13 @@ import tweepy
 import argparse
 import sys
 import os
-import jsonpickle
+import json
+import twitter_util
 
 KEYPATH = "keys/auth"
 LANG = "en"
 COUNT = 100
-MAX_TWEETS = 100000
+MAX_TWEETS = 500000
 TWEET_MODE = "extended"
 
 if __name__ == "__main__":
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     query = args.query
     output_filepath = os.path.join(args.output, query)
+    query = query + " -filter:retweets"
 
     # read auth details from private key file
     with open(KEYPATH, "r") as auth_file:
@@ -55,10 +57,10 @@ if __name__ == "__main__":
             try:
                 # first iteration - read the most recent tweets
                 if max_id <= 0:
-                    new_tweets = api.search(q=query, count=COUNT)
+                    new_tweets = api.search(q=query, count=COUNT, tweet_mode='extended')
                 # subsequent iterations - start searching where the previous iteration left off
                 else:
-                    new_tweets = api.search(q=query, count=COUNT, max_id=str(max_id - 1))
+                    new_tweets = api.search(q=query, count=COUNT, max_id=str(max_id - 1), tweet_mode='extended')
 
                 # no more tweets found, exit
                 if not new_tweets:
@@ -66,9 +68,10 @@ if __name__ == "__main__":
                     break
 
                 # save all these tweets to file
-                # TODO preprocess the data before writing it out?
-                for tweet in new_tweets:
-                    f.write(jsonpickle.encode(tweet._json, unpicklable=False) + '\n')
+                data_entries = twitter_util.search_results_to_data_entries(new_tweets)
+                for entry in data_entries:
+                    f.write(json.dumps(entry) + '\n')
+                    f.flush()
 
                 # update variables - the last tweet of the result set is the oldest tweet
                 max_id = new_tweets[-1].id
@@ -81,5 +84,4 @@ if __name__ == "__main__":
                 print("Something went wrong: " + str(e))
                 break
 
-    print ("Downloaded [%d] tweets. Saved to %s" % (tweetCount, output_filepath))
-    
+    print("Downloaded [%d] tweets. Saved to %s" % (tweetCount, output_filepath))
