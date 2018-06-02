@@ -1,3 +1,4 @@
 keys/auth
 venv
 .idea
+__pycache__

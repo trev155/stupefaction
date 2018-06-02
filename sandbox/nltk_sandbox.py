@@ -4,6 +4,7 @@ from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
 
 from nltk.tokenize import word_tokenize
+from nltk.corpus import movie_reviews
 
 
 def run_example():
@@ -38,7 +39,7 @@ def run_example():
     test_set = sentim_analyzer.apply_features(testing_docs)
 
     # train classifier on the training set
-    trainer = NaiveBayesClassifier.train
+    trainer = NaiveBayesClassifier.train(training_set)
     classifier = sentim_analyzer.train(trainer, training_set)
 
     for key, value in sorted(sentim_analyzer.evaluate(test_set).items()):
@@ -59,21 +60,45 @@ def nltk_classifier_example():
     # Step 2
     dictionary = set(word.lower() for passage in train for word in word_tokenize(passage[0]))
 
-    # Step 3
+    # Step 3 - training data
     t = [({word: (word in word_tokenize(x[0])) for word in dictionary}, x[1]) for x in train]
 
     # Step 4 – the classifier is trained with sample data
-    classifier = nltk.DecisionTreeClassifier.train(t)
+    classifier = NaiveBayesClassifier.train(t)
 
     test_data = "Manchurian was hot and spicy"
     test_data_features = {word.lower(): (word in word_tokenize(test_data.lower())) for word in dictionary}
 
     print(classifier.classify(test_data_features))
+    classifier.show_most_informative_features()
+
+
+def movie_reviews_example():
+    def word_feats(words):
+        return dict([(word, True) for word in words])
+
+    negids = movie_reviews.fileids('neg')
+    posids = movie_reviews.fileids('pos')
+
+    negfeats = [(word_feats(movie_reviews.words(fileids=[f])), 'neg') for f in negids]
+    posfeats = [(word_feats(movie_reviews.words(fileids=[f])), 'pos') for f in posids]
+
+    negcutoff = int(len(negfeats) * 3 / 4)
+    poscutoff = int(len(posfeats) * 3 / 4)
+
+    trainfeats = negfeats[:negcutoff] + posfeats[:poscutoff]
+    testfeats = negfeats[negcutoff:] + posfeats[poscutoff:]
+    print('train on %d instances, test on %d instances' % (len(trainfeats), len(testfeats)))
+
+    classifier = NaiveBayesClassifier.train(trainfeats)
+    print('accuracy:', nltk.classify.util.accuracy(classifier, testfeats))
+    classifier.show_most_informative_features()
 
 
 if __name__ == "__main__":
     # run_example()
-    nltk_classifier_example()
-
+    # nltk_classifier_example()
+    # movie_reviews_example()
+    pass
 
 

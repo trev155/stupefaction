@@ -8,15 +8,17 @@ Twitter Application account:
 https://apps.twitter.com/app/15289640
 
 ## NOTES
-- I probably don't even need to use a backend DB. What would I even store in it? I don't even know yet, haha.
-I'll just leave it there for now I guess.
+### short term idea
+- twitter api (streaming, or regular search)-> get tweets -> save to mysql db
+    - query: either automatically fetch some trending hashtag, or just manually enter a query
 
-### brainstorming ideas
-- classifying a tweet based on gender, age (with nltk or scikit fns)
-- classifying a tweet based on PoS tags (spacy), or other features extracted from spacy
-- sentiment analysis - classifying a tweet based on sentiment (use vader to get sentiment for training data? no idea how to do this)
+- get all tweets about some topic, like trump
+- compute sentiments (eg. vader) for these tweets
+- look at the users / profiles of these tweets, and do a text analysis of these users / user descriptions / etc.
+    - what are these people tweeting about in general? etc.
 
-train a model, scikit - persist a model
+### long term ideas
+- make an interactive front end in some framework that pretty much does all of my short term ideas
 
 ## Local Setup
 This is a hobbyist project so yeah, everything is going to be done locally on my own machine.
@@ -50,13 +52,12 @@ Point PyCharm to the virtualenv:
 ### Requirements so far
 Main packages to install (make sure to do it your virtualenv):
 - tweepy
-- spaCy
+- spacy
 - nltk
 - django
 - mysqlclient
-
-For spacy, have to download languages:
-`python -m spacy download en`
+- textblob
+- pandas
 
 ### MySQL setup
 Install MySQL on your machine.
@@ -126,5 +127,4 @@ where as noted earlier,
 our database name is `stupefaction`, we can use the `root` user, and our root pw is just `root`.
 
 ### Django web app - views, routes, etc.
-
-
+next up...
