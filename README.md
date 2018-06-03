@@ -9,9 +9,8 @@ https://apps.twitter.com/app/15289640
 
 ## NOTES
 ### up next
-- finish tweet extraction to file
-- how to ensure no duplicate tweet texts?
-- start working on a script that reads from file and does stuff
+- output files should contain the query of the twitter api search on the first line, so that readers know what query was used for that file
+- more basic analytics
 
 ### short term idea
 - twitter api (streaming, or regular search)-> get tweets -> save to mysql db

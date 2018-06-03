@@ -71,7 +71,7 @@ if __name__ == "__main__":
                 data_entries = twitter_util.search_results_to_data_entries(new_tweets)
                 for entry in data_entries:
                     f.write(json.dumps(entry) + '\n')
-                    f.flush()
+                f.flush()
 
                 # update variables - the last tweet of the result set is the oldest tweet
                 max_id = new_tweets[-1].id

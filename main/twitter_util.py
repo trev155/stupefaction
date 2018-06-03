@@ -51,8 +51,8 @@ def tweet_to_data_entry(tweet):
     creation_data = str(tweet.created_at)
     author_num_followers = tweet.author.followers_count
     author_num_favourites = tweet.author.favourites_count
-    hashtags = list(map(lambda tag: tag["text"], tweet.entities["hashtags"]))
-    mentions = list(map(lambda tag: tag["screen_name"], tweet.entities["user_mentions"]))
+    hashtags = list(map(lambda tag: tag["text"].lower(), tweet.entities["hashtags"]))
+    mentions = list(map(lambda tag: tag["screen_name"].lower(), tweet.entities["user_mentions"]))
     retweets = tweet.retweet_count
     source = tweet.source
 
@@ -63,7 +63,7 @@ def tweet_to_data_entry(tweet):
     tags = tb.tags
 
     # create the data entry
-    data_field_names = ["raw", "text", "created_at", "author_num_followers", "author_num_favourites", "hashtags",
+    data_field_names = ["raw", "cleaned", "created_at", "author_num_followers", "author_num_favourites", "hashtags",
                         "mentions", "retweets", "source", "polarity", "subjectivity", "tags"]
     data_fields = [tweet_text, cleaned_tweet_text, creation_data, author_num_followers, author_num_favourites, hashtags,
                    mentions, retweets, source, polarity, subjectivity, tags]
@@ -92,6 +92,7 @@ def clean_tweet(s):
     cleaned_str = remove_newlines(cleaned_str)
     cleaned_str = remove_mentions(cleaned_str)
     cleaned_str = strip_whitespace(cleaned_str)
+    cleaned_str = cleaned_str.lower()
     return cleaned_str
 
 
@@ -147,7 +148,7 @@ def remove_urls(s):
     :param s: string to clean
     :return: string: cleaned string
     """
-    cleaned_str = re.sub(r'https?:\/\/.*[\r\n]*', '', s)
+    cleaned_str = re.sub(r'http\S+', '', s)
     return cleaned_str
 
 
