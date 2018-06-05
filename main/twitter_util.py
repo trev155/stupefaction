@@ -24,10 +24,13 @@ def tweet_to_data_entry(tweet):
     Takes a tweet, extracts the relevant fields, and return a data entry, a light-weight version of the tweet.
     Also adds extra features from the text, run through TextBlob.
 
-    A data entry looks like:
+    The input data format is a "Status" object, representing a tweet. The format can be found here:
+    https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/tweet-object.html
+
+    The return value / data entry looks like:
     {
         "raw": raw tweet text,
-        "text": cleaned tweet text,
+        "cleaned": cleaned tweet text,
         "created_at": date the tweet was made,
         "author_num_followers": number of followers by the person who made the tweet,
         "author_num_favourites": number of favourites that the author of the tweet has,
@@ -40,7 +43,7 @@ def tweet_to_data_entry(tweet):
         "tags": TextBlob PoS tagging, list of tuples
     }
 
-    :param tweet:
+    :param tweet: a single "Status" object, representing a tweet.
     :return: dictionary, data entry
     """
     # extract text from the tweet

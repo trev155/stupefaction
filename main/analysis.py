@@ -1,13 +1,16 @@
 """
 analysis.py
 
-Read in the output from twitter_search.py, and analyze the data.
+Read in the output from twitter_search.py, and run some analytics, plot some graphs, etc.
 """
 import argparse
 import json
 import os
+from textwrap import wrap
 import matplotlib.pyplot as plt
 
+
+FILE_DELIMITER_CHAR = "|"
 
 ###########
 # Helpers #
@@ -70,8 +73,8 @@ def create_bar_graph(counts, num_bars, xlabel, title, output_location):
 
     # plot
     plt.bar(range(num_bars), list(top.values()), align='center', color="orange")
-    plt.gcf().subplots_adjust(bottom=0.30)
-    plt.title(title)
+    plt.gcf().subplots_adjust(bottom=0.3)
+    plt.title("\n".join(wrap(title, 70)))
     plt.xticks(range(num_bars), list(top.keys()), rotation=70)
     plt.xlabel(xlabel)
     plt.ylabel(s="frequency")
@@ -107,14 +110,30 @@ def create_pie_chart(counts, num_parts, title, output_location):
 
     percentages_list = list(map(lambda c: float(c) / total_count * 100, counts_list))
 
-    explode_list = [0.05 for _ in range(num_parts)]
+    explode_list = [0 for _ in range(num_parts)]
+    if num_parts > 6:
+        explode_list[-4] = 0.10
+        explode_list[-3] = 0.10
+        explode_list[-2] = 0.10
+        explode_list[-1] = 0.10
 
     # plot
-    patches, texts = plt.pie(percentages_list, explode=explode_list, startangle=90, shadow=True)
-    plt.legend(patches, labels_list, loc="best")
-    plt.title(title)
+    patches, texts, pcts = plt.pie(percentages_list, labels=labels_list, autopct="%.2f", explode=explode_list, startangle=90, shadow=True)
+    plt.title("\n".join(wrap(title, 60)))
     plt.savefig(output_location)
     plt.close()
+
+
+def title_builder(main, query, date):
+    """
+    Build a string for a plot title.
+
+    :param main: Main substance of the title.
+    :param query: the query used
+    :param date: timestamp
+    :return: string
+    """
+    return main + ", for the search query '" + query + "', " + "for the last 7 days starting at (" + date + ")"
 
 
 if __name__ == "__main__":
@@ -126,10 +145,17 @@ if __name__ == "__main__":
 
     input_filepath = args.input
 
-    # TODO make this cleaner - make the first line of output contain the actual query
-    query_used = os.path.basename(input_filepath)
+    # retrieve the original query used in the search
+    basename = os.path.basename(input_filepath)
 
-    output_filepath = os.path.join(args.output, query_used)
+    query_list = basename.split(FILE_DELIMITER_CHAR)[:-1]
+    query_used = " ".join(query_list)
+
+    # retrieve the timestamp
+    timestamp = basename.split(FILE_DELIMITER_CHAR)[-1]
+
+    # determine where output files should be placed
+    output_filepath = os.path.join(args.output, basename)
 
     with open(input_filepath, "r") as input_file:
         # read in data as a list of dictionaries
@@ -137,9 +163,12 @@ if __name__ == "__main__":
 
         # pie chart of source frequencies
         source_counts = get_source_counts(data_entries)
-        create_pie_chart(source_counts, 7, "Source of Tweets", output_filepath + "-" + "sources")
+        create_pie_chart(source_counts, 7, title_builder("Source of Tweets", query_used, timestamp),
+                         output_filepath + "-" + "sources")
 
         # bar graph of hashtag frequencies
         hashtag_counts = get_hashtag_counts(data_entries)
         create_bar_graph(hashtag_counts, 12, "Hashtags",
-                         "Hashtag Frequencies for tweets containing " + query_used, output_filepath + "-" + "hashtags")
+                         title_builder("Hashtag frequencies", query_used, timestamp),
+                         output_filepath + "-" + "hashtags")
+

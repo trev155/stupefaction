@@ -7,9 +7,13 @@ http://socialmedia-class.org/twittertutorial.html
 Twitter Application account:
 https://apps.twitter.com/app/15289640
 
+How to construct a query on Twitter:
+- the API is the same as the search bar on the site
+- see: https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators.html
+
+
 ## NOTES
 ### up next
-- output files should contain the query of the twitter api search on the first line, so that readers know what query was used for that file
 - more basic analytics
 
 ### short term idea

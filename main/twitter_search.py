@@ -1,16 +1,25 @@
 """
-twitter_api.py
+twitter_search.py
 
 A script that executes a Search request to the Twitter API.
 
 Uses tweepy, see the documentation here: http://docs.tweepy.org/en/v3.6.0/api.html.
 Credit to: https://dev.to/bhaskar_vk/how-to-use-twitters-search-rest-api-most-effectively
+
+The script takes in a search query, in the "query" argument.
+This string may be space separated and contain multiple search terms, such as:
+'hello world' or '"watching now"'.
+
+The script produces an output file with the query term, as well as a timestamp.
+The output file contains all the tweets that match the query from the past 7 days (as the twitter API only lets you
+go back in time that far).
 """
 import tweepy
 import argparse
 import sys
 import os
 import json
+import datetime
 import twitter_util
 
 KEYPATH = "keys/auth"
@@ -18,6 +27,7 @@ LANG = "en"
 COUNT = 100
 MAX_TWEETS = 500000
 TWEET_MODE = "extended"
+FILE_DELIMITER_CHAR = "|"
 
 if __name__ == "__main__":
     # command line parsing
@@ -25,9 +35,20 @@ if __name__ == "__main__":
     parser.add_argument("-q", "--query", help="Specify the query string to use", required=True)
     parser.add_argument("-o", "--output", help="Specify output file path", required=True)
     args = parser.parse_args()
-    query = args.query
-    output_filepath = os.path.join(args.output, query)
-    query = query + " -filter:retweets"
+
+    # the input query is some space separated string
+    raw_query = args.query
+    raw_query_list = raw_query.split(" ")
+
+    # generate a non-space string representation of the raw query
+    raw_query_with_no_spaces = FILE_DELIMITER_CHAR.join(raw_query_list)
+
+    # construct the output filename
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+    output_filepath = os.path.join(args.output, raw_query_with_no_spaces + FILE_DELIMITER_CHAR + timestamp)
+
+    # construct the actual query that we will be using - want to ignore retweets
+    query = raw_query + " -filter:retweets"
 
     # read auth details from private key file
     with open(KEYPATH, "r") as auth_file:
