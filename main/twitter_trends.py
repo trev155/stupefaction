@@ -58,8 +58,8 @@ if __name__ == "__main__":
             trend_data = {
                 "woeid": trends["locations"][0]["woeid"],
                 "location_name": trends["locations"][0]["name"],
-                "started_trending": trends["as_of"],
-                "trend_list": list(map(lambda t: t["name"], trends["trends"]))
+                "starting": trends["as_of"],
+                "trend_list": list(map(lambda t: t["name"].lower(), trends["trends"]))
             }
 
             # write out to file

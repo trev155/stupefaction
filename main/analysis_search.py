@@ -107,9 +107,6 @@ def get_sent_subj_data(data_entries):
     return all_data
 
 
-###########
-# Helpers #
-###########
 def title_builder(main, query, date):
     """
     Build a string for a plot title.
@@ -177,7 +174,7 @@ if __name__ == "__main__":
     # command line parsing
     parser = argparse.ArgumentParser(description="Preprocess CSV files")
     parser.add_argument("-i", "--input", help="Specify input file path", required=True)
-    parser.add_argument("-o", "--output", help="Specify output file path", required=True)
+    parser.add_argument("-o", "--output", help="Specify output directory", required=True)
     args = parser.parse_args()
 
     input_filepath = args.input
