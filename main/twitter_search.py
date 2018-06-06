@@ -12,7 +12,7 @@ This string may be space separated and contain multiple search terms, such as:
 
 The script produces an output file with the query term, as well as a timestamp.
 The output file contains all the tweets that match the query from the past 7 days (as the twitter API only lets you
-go back in time that far), OR a max of 500,000 of the most recent tweets.
+go back in time that far), OR a max of 200,000 of the most recent tweets.
 """
 import tweepy
 import argparse

@@ -1,13 +1,12 @@
 """
-analysis.py
+analysis_search.py
 
 Read in the output from twitter_search.py, and run some analytics, plot some graphs, etc.
 """
 import argparse
 import json
 import os
-from textwrap import wrap
-import matplotlib.pyplot as plt
+import plots
 
 FILE_DELIMITER_CHAR = "|"
 
@@ -66,85 +65,51 @@ def get_pos_tag_counts(data_entries):
     return counts
 
 
-#################
-# Plots, Graphs #
-#################
-def create_bar_graph(counts, num_bars, xlabel, sp_left_adj, title, output_location):
+def get_sentiment_counts(data_entries):
     """
-    Create and plot a bar graph of frequencies for the counts.
+    Each data entry has a sentiment score. Classify data entries as positive, negative, neutral, etc.
 
-    The input `counts` dictionary must look like:
-    {
-        "str_A": int,
-        "str_B": int,
-        etc.
-    }
-
-    :param counts: dictionary of counts
-    :param num_bars: number of bars on the x-axis
-    :param xlabel: string, label for x-axis
-    :param sp_left_adj: float, number to be passed into subplots_adjust(left), because plotting sucks
-    :param title: string, title of plot
-    :param output_location: string, output file location for plot
+    :param data_entries: list of data entries
+    :return: dictionary of counts
     """
-    # sort counts
-    ordered = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-    top = dict(ordered[:num_bars])
+    counts = {}
+    for entry in data_entries:
+        polarity_score = entry["polarity"]
+        if polarity_score <= -0.6:
+            sentiment = "very negative"
+        elif polarity_score < -0.2:
+            sentiment = "negative"
+        elif polarity_score < 0.2:
+            sentiment = "neutral"
+        elif polarity_score < 0.6:
+            sentiment = "positive"
+        else:
+            sentiment = "very positive"
 
-    # plot
-    plt.bar(range(num_bars), list(top.values()), align='center', color="orange")
-    plt.subplots_adjust(bottom=0.4, left=sp_left_adj)
-    plt.title("\n".join(wrap(title, 70)))
-    plt.xticks(range(num_bars), list(top.keys()), rotation=85)
-    plt.xlabel(xlabel)
-    plt.ylabel(s="frequency")
-    plt.savefig(output_location)
-    plt.close()
+        if sentiment in counts:
+            counts[sentiment] += 1
+        else:
+            counts[sentiment] = 1
+    return counts
 
 
-def create_pie_chart(counts, num_parts, title, output_location):
+def get_sent_subj_data(data_entries):
     """
-    Create and plot a pie chart for counts.
+    Get both the polarity and subjectivity scores for all data entries.
+    Return as a list of tuples, [(polarity, subjectivity)]
 
-    The input `counts` dictionary must look like:
-    {
-        "str_A": int,
-        "str_B": int,
-        etc.
-    }
-
-    :param counts: dictionary of counts
-    :param num_parts: number of pie parts
-    :param title: string, title of plot
-    :param: output_location: string, output file location for plot
+    :param data_entries: list of data entries
+    :return: list of tuples
     """
-    # figure out how to split the pie
-    ordered = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-
-    labels_list = [kv[0] for kv in ordered[:num_parts - 1]] + ["Others"]
-
-    counts_list = [kv[1] for kv in ordered[:num_parts - 1]]
-    total_count = sum([kv[1] for kv in ordered])
-    others = total_count - sum(counts_list)
-    counts_list.append(others)
-
-    percentages_list = list(map(lambda c: float(c) / total_count * 100, counts_list))
-
-    explode_list = [0 for _ in range(num_parts)]
-    if num_parts > 6:
-        explode_list[-4] = 0.10
-        explode_list[-3] = 0.10
-        explode_list[-2] = 0.10
-        explode_list[-1] = 0.10
-
-    # plot
-    patches, texts, pcts = plt.pie(percentages_list, labels=labels_list, autopct="%.2f", explode=explode_list,
-                                   startangle=90, shadow=True)
-    plt.title("\n".join(wrap(title, 60)))
-    plt.savefig(output_location)
-    plt.close()
+    all_data = []
+    for entry in data_entries:
+        all_data.append((entry["polarity"], entry["subjectivity"]))
+    return all_data
 
 
+###########
+# Helpers #
+###########
 def title_builder(main, query, date):
     """
     Build a string for a plot title.
@@ -235,18 +200,30 @@ if __name__ == "__main__":
 
         # bar graph of hashtag frequencies
         hashtag_counts = get_hashtag_counts(data_entries)
-        create_bar_graph(hashtag_counts, 12, "Hashtags", 0.15,
-                         title_builder("Hashtag frequencies", query_used, timestamp),
-                         output_filepath + "-" + "hashtags")
+        plots.create_bar_graph(hashtag_counts, 12, "Hashtags", 0.15,
+                               title_builder("Hashtag frequencies", query_used, timestamp),
+                               output_filepath + "-hashtags")
 
         # pie chart of source frequencies
         source_counts = get_source_counts(data_entries)
-        create_pie_chart(source_counts, 7, title_builder("Source of Tweets", query_used, timestamp),
-                         output_filepath + "-" + "sources")
+        plots.create_pie_chart(source_counts, 7, title_builder("Source of Tweets", query_used, timestamp),
+                               output_filepath + "-sources")
 
         # bar graph of part-of-speech frequencies. for parts of speech, also get name mappings
         pos_counts = get_pos_tag_counts(data_entries)
         pos_counts = dict(map(lambda kv: (get_pos_name(kv[0]), kv[1]), pos_counts.items()))
-        create_bar_graph(pos_counts, 12, "Part-of-speech Tags", 0.15,
-                         title_builder("Part-of-speech Tag Frequencies", query_used, timestamp),
-                         output_filepath + "-" + "postags")
+        plots.create_bar_graph(pos_counts, 12, "Part-of-speech Tags", 0.15,
+                               title_builder("Part-of-speech Tag Frequencies", query_used, timestamp),
+                               output_filepath + "-postags")
+
+        # pie chart for sentiment scores
+        sentiment_counts = get_sentiment_counts(data_entries)
+        plots.create_pie_chart_fixed_pieces(sentiment_counts,
+                                            title_builder("Sentiment Ratings", query_used, timestamp),
+                                            output_filepath + "-sentiment")
+
+        # scatter plot for sentiment and subjectivity
+        sent_subj_data = get_sent_subj_data(data_entries)
+        plots.create_scatter_plot(sent_subj_data,
+                                  title_builder("Polarity and Subjectivity", query_used, timestamp),
+                                  "Polarity", "Subjectivity", output_filepath + "-sentsubj")

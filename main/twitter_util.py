@@ -1,3 +1,8 @@
+"""
+twitter_util.py
+
+Utilities for twitter api functions.
+"""
 import html
 import re
 from textblob import TextBlob

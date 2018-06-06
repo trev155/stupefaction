@@ -14,23 +14,16 @@ How to construct a query on Twitter:
 
 ## NOTES
 ### up next
-- more basic analytics
-
-### short term idea
-- twitter api (streaming, or regular search)-> get tweets -> save to mysql db
-    - query: either automatically fetch some trending hashtag, or just manually enter a query
-
-- get all tweets about some topic, like trump
-- compute sentiments (eg. vader) for these tweets
-- look at the users / profiles of these tweets, and do a text analysis of these users / user descriptions / etc.
-    - what are these people tweeting about in general? etc.
+- analysis of trending tweets
+- more search terms, etc.
 
 ### long term ideas
-- make an interactive front end in some framework that pretty much does all of my short term ideas
+- make an interactive front end in some framework that pretty much
+provides a UI for all the twitter / analysis functions
+
 
 ## Local Setup
-This is a hobbyist project so yeah, everything is going to be done locally on my own machine.
-These notes are mostly for myself.
+These instructions are designed for my own machine.
 
 ### Twitter - Auth Keys
 Recommended to keep a local file around called `auth` somewhere in the project.
@@ -65,6 +58,8 @@ To save your requirements:
 - `pip freeze > requirements.txt`
 
 ### MySQL setup
+(NOTE: I don't actually think I'll need MySQL for this, but here are instructions anyway)
+
 Install MySQL on your machine.
 
 I'm on Ubuntu 16.04, and using MySQL 5.7. If installation is failing, look at:
