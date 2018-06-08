@@ -2,3 +2,5 @@ keys/auth
 venv
 .idea
 __pycache__
+*.pyc
+output/data

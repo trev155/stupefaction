@@ -120,5 +120,63 @@ default-character-set = utf8
 where as noted earlier,
 our database name is `stupefaction`, we can use the `root` user, and our root pw is just `root`.
 
-### Django web app - views, routes, etc.
-next up...
+
+### Django Models
+https://docs.djangoproject.com/en/2.0/intro/tutorial02/
+
+A model describes how your data will be structured in your database.
+
+There are 3 steps to updating models:
+1. Change your models in models.py
+2. Run `python manage.py makemigrations` to create a migration.
+3. Run `python manage.py migrate` to apply the migrations.
+
+### Django Admin
+https://docs.djangoproject.com/en/2.0/intro/tutorial02/
+
+Create a superuser:  
+`python manage.py superuser`
+
+then, create a user, pass, etc.
+
+To access the admin route, go to `localhost:8000/admin`
+
+In order to add your models to the admin page, you have to add it to `admin.py`.
+
+For example,
+```
+from .models import Question
+admin.site.register(Question)
+```
+
+### Adding Views
+https://docs.djangoproject.com/en/2.0/intro/tutorial03/
+
+Need to add code to both `views.py` and `urls.py`
+
+For example,
+```
+def detail(request, question_id):
+    return HttpResponse("You're looking at question %s." % question_id)
+```
+```
+# ex: /polls/5/
+path('<int:question_id>/', views.detail, name='detail')
+```
+
+### View Templates
+https://docs.djangoproject.com/en/2.0/intro/tutorial03/
+
+Create a directory called `templates/<app_name>`.
+Place html files in here, these are the templates that will get used.
+
+Views receive objects from the route handlers in `views.py`.
+For example,  
+`return render(request, 'tweety/detail.html', {'question': question})`  
+will send the `question` object to the `tweety/detail.html` view.  
+
+In the `tweety/detail.html` view, you can access fields by:  
+`{{ question.question_text }}`  
+
+and you can do things like iteration, etc. by:  
+`{% for choice in question.choice_set.all %}`
