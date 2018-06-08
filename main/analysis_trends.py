@@ -77,6 +77,39 @@ def unique_trending(trends_data, output_filepath):
                         (location["location_name"], location["woeid"], location["starting"].split("T")[0]))
 
 
+def common_trending(trends_data, output_filepath):
+    """
+    For each location in trends_data, get all the common top 10 trends.
+    Write data out to output_filepath.
+
+    :param trends_data: list of dictionaries, containing trends data
+    :param output_filepath: string, output file to write to
+    """
+    with open(output_filepath, "w") as f:
+        f.write("Common Top 10 Trending topics for locations in Canada\n")
+        all_locations = list(map(lambda d: d["location_name"], trends_data))
+        f.write("All Locations: ")
+        for location in all_locations:
+            f.write(location + ",")
+        f.write("\n\n")
+
+        # intersect all top 10s
+        if len(trends_data) == 0:
+            # shouldn't happen, but handle gracefully
+            f.write("No data available!")
+        elif len(trends_data) == 1:
+            top_ten = trends_data[0]["trend_list"][:10]
+            for t in top_ten:
+                f.write(t + " ")
+        else:
+            common_top_ten = set(trends_data[0]["trend_list"][:10])
+            for i in range(1, len(trends_data)):
+                top_ten = set(trends_data[i]["trend_list"][:10])
+                common_top_ten = common_top_ten.intersection(top_ten)
+            for t in common_top_ten:
+                f.write(t + " ")
+
+
 if __name__ == "__main__":
     # command line parsing
     parser = argparse.ArgumentParser(description="Preprocess CSV files")
@@ -96,3 +129,6 @@ if __name__ == "__main__":
 
         # get a report of the unique trends in these locations
         unique_trending(trends_data, os.path.join(output_dir, "trends-unique"))
+
+        # get a report of the common trends across locations
+        common_trending(trends_data, os.path.join(output_dir, "trends-common"))

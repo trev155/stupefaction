@@ -14,13 +14,7 @@ How to construct a query on Twitter:
 
 ## NOTES
 ### up next
-- analysis of trending tweets
-- more search terms, etc.
-
-### long term ideas
-- make an interactive front end in some framework that pretty much
-provides a UI for all the twitter / analysis functions
-
+- make an interactive front end in django that provides a UI for all the twitter/analysis functions
 
 ## Local Setup
 These instructions are designed for my own machine.
