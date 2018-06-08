@@ -1,4 +1,9 @@
 # stupefaction
+
+### up next
+- make an interactive front end in django that provides a UI for all the twitter/analysis functions
+
+## General Notes
 Purpose is to learn about how to scrape data from twitter API and then do some NLP on it.
 
 Good Tutorial to get started on Twitter / Twitter API:
@@ -11,12 +16,7 @@ How to construct a query on Twitter:
 - the API is the same as the search bar on the site
 - see: https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators.html
 
-
-## NOTES
-### up next
-- make an interactive front end in django that provides a UI for all the twitter/analysis functions
-
-## Local Setup
+### Local Setup
 These instructions are designed for my own machine.
 
 ### Twitter - Auth Keys
@@ -52,7 +52,7 @@ To save your requirements:
 - `pip freeze > requirements.txt`
 
 ### MySQL setup
-(NOTE: I don't actually think I'll need MySQL for this, but here are instructions anyway)
+(NOTE: I don't know if I'll need MySQL for this, but here are instructions anyway)
 
 Install MySQL on your machine.
 
@@ -71,7 +71,7 @@ Connect to MySQL from command line:
 Create database named `stupefaction`:
 `create database stupefaction;`
 
-
+## Django
 ### Getting started with Django
 Tutorial I'm following:
 https://docs.djangoproject.com/en/2.0/intro/tutorial01/
@@ -89,9 +89,9 @@ To start a project, do:
 `django-admin startproject project`
 
 To create an application:
-`python manage.py startapp tweety`
+`python manage.py startapp polls`
 
-which will create a directory called "tweety", representing an "app".
+which will create a directory called "polls", representing an "app".
 
 ### Connect Django to MySQL
 By default, Django seems to use Sqlite. We are going to change this to MySQL.
@@ -172,11 +172,61 @@ Place html files in here, these are the templates that will get used.
 
 Views receive objects from the route handlers in `views.py`.
 For example,  
-`return render(request, 'tweety/detail.html', {'question': question})`  
-will send the `question` object to the `tweety/detail.html` view.  
+`return render(request, 'polls/detail.html', {'question': question})`  
+will send the `question` object to the `polls/detail.html` view.  
 
-In the `tweety/detail.html` view, you can access fields by:  
+In the `polls/detail.html` view, you can access fields by:  
 `{{ question.question_text }}`  
 
 and you can do things like iteration, etc. by:  
 `{% for choice in question.choice_set.all %}`
+
+
+### Tests
+https://docs.djangoproject.com/en/2.0/intro/tutorial05/
+
+Put your tests in `project/<app-name>/tests.py`  
+
+Run tests with:  
+` python manage.py test <app-name>`
+
+The nice thing with this is that Django creates a test database for you.
+
+
+### Static Content (CSS, JS, images)
+https://docs.djangoproject.com/en/2.0/intro/tutorial06/
+
+Make a directory called `project/<app-name>/static/<app-name>`.  
+Now, add your CSS files here.
+
+You can load css files from an html file by doing:
+```
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+```
+
+If that doesn't work, take a look at this:  
+https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+
+### customizing the admin page
+https://docs.djangoproject.com/en/2.0/intro/tutorial07/
+
+This isn't really important, but I'll include it anyway.
+
+For example, you can do something like this:
+```
+from django.contrib import admin
+from .models import Question
+
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None,               {'fields': ['question_text']}),
+        ('Date information', {'fields': ['pub_date']}),
+    ]
+
+admin.site.register(Question, QuestionAdmin)
+```
+
+I don't go over the rest.

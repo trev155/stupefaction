@@ -1,0 +1,12 @@
+li a {
+    color: rgba(220, 230, 100, 0.9)
+}
+
+p {
+    color: green;
+}
+
+body {
+    background: white url("images/background.gif") no-repeat;
+    background-size:cover;
+}
