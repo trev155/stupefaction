@@ -23,27 +23,41 @@ p {
 #search-section {
     background-color: white;
     margin-top: 10px;
-    padding-bottom: 10px;
     border: 1px solid rgb(0, 172, 232);
 }
 
+#search-input, #search-options {
+    height: 300px;
+    border: 1px solid rgb(29, 202, 255);
+}
+
 #search-query {
-    border: 1px solid blue;
+    border: 1px solid rgb(29, 202, 255);
     border-radius: 12px;
     height: 40px;
     font-size: 16px;
     color: black;
     background-color: rgb(29, 202, 255);
+    width: 300px;
+}
+
+#search-query-button {
+    display: block;
+    margin-top: 15px;
+    background-color: #e6ecf0;
+    border-radius: 10px;
+    width: 300px;
 }
 
 /* Output Section */
 #output-section {
     background-color: white;
     margin-top: 20px;
-    height: 600px;
-    overflow: auto;
-    border: 1px solid rgb(0, 172, 232);
+    margin-bottom: 20px;
 }
 
-
-
+#output-left, #output-right {
+    height: 600px;
+    overflow: scroll;
+    border: 1px solid rgb(29, 202, 255);
+}

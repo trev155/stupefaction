@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 
+<!-- load static assets -->
+{% load static %}
+
 <head>
     <title>Tweety</title>
 
@@ -14,16 +17,17 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- my own css -->
-    {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'tweety/style.css' %}" />
 </head>
 
 <body>
     <div class='container'>
-        <div class="row">
-            <div id="header" class='col-md-12'>
+        <div id="header" class="row">
+            <div class='col-md-12'>
                 <h1>Twitter Stuff</h1>
                 <p>Stuff that does things.</p>
+                <p>Specifically, provides an interface to the Twitter API and gives you some nicely formatted data
+                and analytics.</p>
             </div>
         </div>
 
@@ -32,10 +36,12 @@
                 <h2>Search for Tweets!</h2>
                 <form>
                     <p>Search Query:</p>
-                    <input id="search-query" type="text" name="fname">
-                    <br>
-                    <button type="button">Go!</button>
+                    <input id="search-query" type="text">
+                    <p>Max Results to Return:</p>
+                    <input id="search-number" type="number">
+                    <button id="search-query-button" type="button">Go!</button>
                 </form>
+                <div id="search-output-message"></div>
             </div>
 
             <div id="search-options" class='col-md-6'>
@@ -43,12 +49,19 @@
             </div>
         </div>
 
-        <div class="row">
-            <div id="output-section" class='col-md-12'>
-                <p>Main Output Section</p>
+        <div id="output-section" class="row">
+            <div id="output-left" class='col-md-6'>
+                <p>Output Left</p>
+            </div>
+
+            <div id="output-right" class='col-md-6'>
+                <p>Output Right</p>
             </div>
         </div>
     </div>
+
+    <!-- Javascript -->
+    <script src="{% static 'tweety/index.js' %}"></script>
 
 </body>
 

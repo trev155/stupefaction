@@ -1,9 +1,13 @@
 # stupefaction
 
+Originally I was planning to scrape twitter data and do some analysis on it.
+I wanted to make a front-end, as in, you could just enter a query, and it would display data / graphs.
+I don't know how I would integrate the database, so I'm not going to use it right now.
+This is a lot more work than I would like, and it might be something to come back to later.
+
 ### up next
-- continue designing the front end
-- connect front end to back end functions
-- figure out a way to incoporate the db
+- make the front end better
+- update readme with instructions
 
 ## General Notes
 Purpose is to learn about how to scrape data from twitter API and then do some NLP on it.
