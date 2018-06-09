@@ -1,0 +1,49 @@
+/* General */
+body {
+    background-color: #e6ecf0;
+}
+
+h1, h2 {
+    color: black;
+}
+
+p {
+    color: rgb(0, 172, 232);
+    font-size: 16px;
+}
+
+/* Header */
+#header {
+    background-color: white;
+    margin-top: 10px;
+    border: 1px solid rgb(0, 172, 232);
+}
+
+/* Search Section */
+#search-section {
+    background-color: white;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid rgb(0, 172, 232);
+}
+
+#search-query {
+    border: 1px solid blue;
+    border-radius: 12px;
+    height: 40px;
+    font-size: 16px;
+    color: black;
+    background-color: rgb(29, 202, 255);
+}
+
+/* Output Section */
+#output-section {
+    background-color: white;
+    margin-top: 20px;
+    height: 600px;
+    overflow: auto;
+    border: 1px solid rgb(0, 172, 232);
+}
+
+
+

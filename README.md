@@ -1,7 +1,9 @@
 # stupefaction
 
 ### up next
-- make an interactive front end in django that provides a UI for all the twitter/analysis functions
+- continue designing the front end
+- connect front end to back end functions
+- figure out a way to incoporate the db
 
 ## General Notes
 Purpose is to learn about how to scrape data from twitter API and then do some NLP on it.
@@ -127,7 +129,7 @@ https://docs.djangoproject.com/en/2.0/intro/tutorial02/
 A model describes how your data will be structured in your database.
 
 There are 3 steps to updating models:
-1. Change your models in models.py
+1. Change your models in `models.py`
 2. Run `python manage.py makemigrations` to create a migration.
 3. Run `python manage.py migrate` to apply the migrations.
 

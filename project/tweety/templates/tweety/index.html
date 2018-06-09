@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tweety</title>
+
+    <!-- Bootstrap properties -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Pulls in Bootstrap's CSS library -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Includes jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Pulls in Bootstrap's prebuilt JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- my own css -->
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'tweety/style.css' %}" />
+</head>
+
+<body>
+    <div class='container'>
+        <div class="row">
+            <div id="header" class='col-md-12'>
+                <h1>Twitter Stuff</h1>
+                <p>Stuff that does things.</p>
+            </div>
+        </div>
+
+        <div id="search-section" class="row">
+            <div id="search-input" class='col-md-6'>
+                <h2>Search for Tweets!</h2>
+                <form>
+                    <p>Search Query:</p>
+                    <input id="search-query" type="text" name="fname">
+                    <br>
+                    <button type="button">Go!</button>
+                </form>
+            </div>
+
+            <div id="search-options" class='col-md-6'>
+                <h2>Search Options</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="output-section" class='col-md-12'>
+                <p>Main Output Section</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+
